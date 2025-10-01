@@ -11,3 +11,13 @@ wheels/
 
 # Env
 .env
+
+# Project metadata & specs
+.claude/
+.specstar/
+.specify/
+specs/
+
+# Cache directories
+.ruff_cache/
+.pytest_cache/

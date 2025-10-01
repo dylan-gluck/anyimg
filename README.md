@@ -17,7 +17,7 @@ CLI for generating images using `Google Gemini 2.5 Flash` aka Nano Banana.
 
 2. **Clone and install**:
 ```bash
-git clone <repository-url>
+git clone https://github.com/dylan-gluck/anyimg
 cd anyimg
 uv sync
 ```
@@ -164,6 +164,5 @@ Wait a few minutes before retrying, or reduce batch size
 
 ## References
 
-- Demo Project: `/home/d/workspace/projects/logo-designer`
 - Gemini Docs: https://ai.google.dev/gemini-api/docs/image-generation
 - Video Generation: https://ai.google.dev/gemini-api/docs/video

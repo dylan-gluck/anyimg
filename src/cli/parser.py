@@ -1,11 +1,12 @@
 """CLI argument parser."""
 
 import argparse
+from typing import Sequence
 
 from src.models.config import GenerationConfig
 
 
-def parse_args(args: list[str] | None = None) -> GenerationConfig:
+def parse_args(args: Sequence[str] | None = None) -> GenerationConfig:
     """Parse CLI arguments into GenerationConfig.
 
     Args:

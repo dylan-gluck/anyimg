@@ -1,6 +1,7 @@
 """Request model for Gemini API image generation."""
 
-from PIL import Image
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
@@ -12,7 +13,7 @@ class ImageGenerationRequest(BaseModel):
         description="Model identifier for Gemini API",
     )
     prompt: str = Field(..., description="Text prompt for image generation")
-    input_images: list[Image.Image] = Field(
+    input_images: list[Any] = Field(  # Using Any for PIL.Image due to Pydantic limitations
         default_factory=list, description="Opened PIL Image objects (0-3)"
     )
     timeout: int = Field(default=60, description="Request timeout in seconds")

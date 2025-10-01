@@ -8,7 +8,6 @@ import pytest
 
 from src.models.config import GenerationConfig
 from src.models.exceptions import (
-    InvalidBatchCountError,
     InvalidInputImageError,
     MissingAPIKeyError,
     TooManyInputImagesError,

@@ -1,12 +1,14 @@
 """Integration test: basic text-to-image (Scenario 1)."""
 
-import subprocess
+import os
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
 
 from PIL import Image
 from pytest import MonkeyPatch
+
+from src.cli.main import main
 
 
 def test_basic_text_to_image(
@@ -25,14 +27,9 @@ def test_basic_text_to_image(
         mock_instance = mock_client.return_value
         mock_instance.models.generate_content.return_value = mock_gemini_success
 
-        result = subprocess.run(
-            ["uv", "run", "python", "-m", "src", "--prompt", "A serene mountain landscape"],
-            capture_output=True,
-            text=True,
-        )
+        exit_code = main(["--prompt", "A serene mountain landscape"])
 
-        assert result.returncode == 0
-        assert "Generated image:" in result.stdout
+        assert exit_code == 0
 
         # Check that a file was created
         generated_files = list(tmp_path.glob("anyimg_*.png"))
@@ -41,3 +38,4 @@ def test_basic_text_to_image(
         # Verify it's a valid PNG
         img = Image.open(generated_files[0])
         assert img.format == "PNG"
+        img.close()

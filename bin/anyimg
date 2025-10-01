@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# anyimg executable wrapper
+cd "$(dirname "$0")/.." && uv run python -m src "$@"

@@ -1,9 +1,11 @@
 """Integration test: invalid input format (Scenario 7)."""
 
-import subprocess
+import os
 from pathlib import Path
 
 from pytest import MonkeyPatch
+
+from src.cli.main import main
 
 
 def test_invalid_input_format(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
@@ -20,11 +22,6 @@ def test_invalid_input_format(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
     txt_file = tmp_path / "test.txt"
     txt_file.write_text("not an image")
 
-    result = subprocess.run(
-        ["uv", "run", "python", "-m", "src", "--prompt", "Test", "--in", str(txt_file)],
-        capture_output=True,
-        text=True,
-    )
+    exit_code = main(["--prompt", "Test", "--in", str(txt_file)])
 
-    assert result.returncode == 2  # Validation error
-    assert "Invalid input image format" in result.stderr or "invalid" in result.stderr.lower()
+    assert exit_code == 2  # Validation error

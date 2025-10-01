@@ -1,12 +1,14 @@
 """Integration test: custom output path (Scenario 3)."""
 
-import subprocess
+import os
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
 
 from PIL import Image
 from pytest import MonkeyPatch
+
+from src.cli.main import main
 
 
 def test_custom_output_path(
@@ -27,16 +29,13 @@ def test_custom_output_path(
         mock_instance = mock_client.return_value
         mock_instance.models.generate_content.return_value = mock_gemini_success
 
-        result = subprocess.run(
-            ["uv", "run", "python", "-m", "src", "--prompt", "City", "--out", str(output_path)],
-            capture_output=True,
-            text=True,
-        )
+        exit_code = main(["--prompt", "City", "--out", str(output_path)])
 
-        assert result.returncode == 0
+        assert exit_code == 0
         assert output_path.exists()
         assert output_path.parent.exists()  # outputs/ directory created
 
         # Verify it's a valid PNG
         img = Image.open(output_path)
         assert img.format == "PNG"
+        img.close()

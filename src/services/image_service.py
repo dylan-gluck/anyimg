@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from PIL import Image
+from PIL.Image import Image as PILImage
 
 from src.models.exceptions import DirectoryCreationError, FileSystemError
 
@@ -11,7 +12,7 @@ class ImageService:
     """Service for image file operations."""
 
     @staticmethod
-    def load_input_images(paths: list[Path]) -> list[Image.Image]:
+    def load_input_images(paths: list[Path]) -> list[PILImage]:
         """Load input images from file paths.
 
         Args:

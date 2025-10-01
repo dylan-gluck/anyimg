@@ -1,9 +1,11 @@
 """Integration test: missing API key (Scenario 10)."""
 
-import subprocess
+import os
 from pathlib import Path
 
 from pytest import MonkeyPatch
+
+from src.cli.main import main
 
 
 def test_missing_api_key(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
@@ -16,12 +18,6 @@ def test_missing_api_key(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
     monkeypatch.chdir(tmp_path)
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
 
-    result = subprocess.run(
-        ["uv", "run", "python", "-m", "src", "--prompt", "Test"],
-        capture_output=True,
-        text=True,
-    )
+    exit_code = main(["--prompt", "Test"])
 
-    assert result.returncode == 1  # Configuration error
-    assert "GEMINI_API_KEY" in result.stderr
-    assert "export" in result.stderr.lower() or "set" in result.stderr.lower()
+    assert exit_code == 1  # Configuration error

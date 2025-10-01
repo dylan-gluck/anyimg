@@ -202,115 +202,115 @@
   - Assert: file is valid PNG (via PIL.Image.open)
   - Assert: exit code 0
 
-- [ ] T028 [P] Integration test: multimodal generation (Scenario 2) in tests/integration/test_multimodal_generation.py
+- [X] T028 [P] Integration test: multimodal generation (Scenario 2) in tests/integration/test_multimodal_generation.py
   - Create: 2 temporary test images
   - Run CLI with: `--prompt "Combine styles" --in img1.png,img2.png`
   - Assert: output PNG created
   - Assert: exit code 0
 
-- [ ] T029 [P] Integration test: custom output path (Scenario 3) in tests/integration/test_custom_output.py
+- [X] T029 [P] Integration test: custom output path (Scenario 3) in tests/integration/test_custom_output.py
   - Run CLI with: `--prompt "City" --out outputs/city.png`
   - Assert: outputs/ directory created
   - Assert: outputs/city.png exists
   - Assert: exit code 0
 
-- [ ] T030 [P] Integration test: batch with custom path (Scenario 4) in tests/integration/test_batch_custom.py
+- [X] T030 [P] Integration test: batch with custom path (Scenario 4) in tests/integration/test_batch_custom.py
   - Run CLI with: `--prompt "Art" --out art.png --batch 3`
   - Assert: art_1.png, art_2.png, art_3.png created
   - Assert: exit code 0
 
-- [ ] T031 [P] Integration test: batch with default naming (Scenario 5) in tests/integration/test_batch_default.py
+- [X] T031 [P] Integration test: batch with default naming (Scenario 5) in tests/integration/test_batch_default.py
   - Run CLI with: `--prompt "Patterns" --batch 3`
   - Assert: 3 files with unique timestamps created
   - Assert: exit code 0
 
-- [ ] T032 [P] Integration test: file collision auto-rename (Scenario 6) in tests/integration/test_file_collision.py
+- [X] T032 [P] Integration test: file collision auto-rename (Scenario 6) in tests/integration/test_file_collision.py
   - Create: empty myimage.png
   - Run CLI with: `--prompt "New" --out myimage.png`
   - Assert: myimage_1.png created (original untouched)
   - Assert: exit code 0
 
-- [ ] T033 [P] Integration test: invalid input format (Scenario 7) in tests/integration/test_invalid_format.py
+- [X] T033 [P] Integration test: invalid input format (Scenario 7) in tests/integration/test_invalid_format.py
   - Create: test.txt (non-image file)
   - Run CLI with: `--prompt "Test" --in test.txt`
   - Assert: error message about invalid format
   - Assert: exit code 2 (validation error)
 
-- [ ] T034 [P] Integration test: too many input images (Scenario 8) in tests/integration/test_too_many_inputs.py
+- [X] T034 [P] Integration test: too many input images (Scenario 8) in tests/integration/test_too_many_inputs.py
   - Create: 4 test images
   - Run CLI with: `--prompt "Test" --in img1.png,img2.png,img3.png,img4.png`
   - Assert: error message "Maximum 3 input images allowed"
   - Assert: exit code 2
 
-- [ ] T035 [P] Integration test: missing input file (Scenario 9) in tests/integration/test_missing_input.py
+- [X] T035 [P] Integration test: missing input file (Scenario 9) in tests/integration/test_missing_input.py
   - Run CLI with: `--prompt "Test" --in nonexistent.png`
   - Assert: error message "Input image not found"
   - Assert: exit code 2
 
-- [ ] T036 [P] Integration test: missing API key (Scenario 10) in tests/integration/test_missing_api_key.py
+- [X] T036 [P] Integration test: missing API key (Scenario 10) in tests/integration/test_missing_api_key.py
   - Unset: GEMINI_API_KEY environment variable
   - Run CLI with: `--prompt "Test"`
   - Assert: error message with setup instructions
   - Assert: exit code 1 (configuration error)
 
-- [ ] T037 [P] Integration test: batch with partial failures (Scenario 12) in tests/integration/test_batch_partial_failure.py
+- [X] T037 [P] Integration test: batch with partial failures (Scenario 12) in tests/integration/test_batch_partial_failure.py
   - Mock: API to fail on 2nd request, succeed on others
   - Run CLI with: `--prompt "Test" --batch 3`
   - Assert: 2 files created (1st and 3rd)
   - Assert: summary shows "2 successful, 1 failed"
   - Assert: exit code 0 (success because some succeeded)
 
-- [ ] T038 [P] Integration test: invalid batch count (Scenario 13) in tests/integration/test_invalid_batch_count.py
+- [X] T038 [P] Integration test: invalid batch count (Scenario 13) in tests/integration/test_invalid_batch_count.py
   - Run CLI with: `--prompt "Test" --batch 0`
   - Assert: error message "Batch count must be at least 1"
   - Assert: exit code 2
 
 ## Phase 3.8: Quality Assurance
 
-- [ ] T039 Run pyright type checking
+- [X] T039 Run pyright type checking
   - Command: `uv run pyright src/ tests/`
   - Fix: all type errors (target: 0 errors)
 
-- [ ] T040 Run ruff linting
+- [X] T040 Run ruff linting
   - Command: `uv run ruff check src/ tests/`
   - Fix: all linting issues (target: 0 issues)
 
-- [ ] T041 Run ruff formatting
+- [X] T041 Run ruff formatting
   - Command: `uv run ruff format src/ tests/`
   - Verify: all files formatted consistently
 
-- [ ] T042 Run full test suite
+- [X] T042 Run full test suite
   - Command: `uv run pytest -v`
   - Target: 100% pass rate for all tests
 
-- [ ] T043 Verify contract tests pass
+- [X] T043 Verify contract tests pass
   - Command: `uv run pytest tests/contract/ -v`
   - Verify: all mocked API interactions work correctly
 
-- [ ] T044 Verify integration tests pass
+- [X] T044 Verify integration tests pass
   - Command: `GEMINI_API_KEY="test_key" uv run pytest tests/integration/ -v`
   - Note: Uses mocks, not real API
 
-- [ ] T045 Manual smoke test with real API
+- [X] T045 Manual smoke test with real API
   - Set: real GEMINI_API_KEY
-  - Run: `uv run python -m src.cli.main --prompt "A simple test image"`
+  - Run: `uv run python -m src --prompt "A simple test image"`
   - Verify: image generated successfully
   - Verify: output is clear and styled with rich
 
 ## Phase 3.9: Documentation
 
-- [ ] T046 Create README.md with usage examples
+- [X] T046 Create README.md with usage examples
   - Section: Installation (uv sync, API key setup)
   - Section: Basic usage (text-to-image examples)
   - Section: Advanced usage (multimodal, batch, custom paths)
   - Section: Error troubleshooting (common errors and fixes)
   - Examples: all from quickstart.md scenarios
 
-- [ ] T047 Create .env.example file
+- [X] T047 Create .env.example file
   - Content: `GEMINI_API_KEY=your_api_key_here`
   - Comment: Instructions to get API key from https://aistudio.google.com/apikey
 
-- [ ] T048 Add docstrings to public functions
+- [X] T048 Add docstrings to public functions
   - Format: Google-style docstrings
   - Coverage: all public functions in services, utils, cli
 

@@ -1,6 +1,7 @@
 """CLI main entry point."""
 
 import sys
+from typing import Sequence
 
 from rich.console import Console
 
@@ -16,14 +17,21 @@ from src.services.gemini_service import GeminiService
 from src.services.image_service import ImageService
 
 
-def main() -> None:
-    """Main CLI entry point."""
+def main(args: Sequence[str] | None = None) -> int:
+    """Main CLI entry point.
+
+    Args:
+        args: Command-line arguments (defaults to sys.argv[1:])
+
+    Returns:
+        Exit code (0=success, 1=config, 2=validation, 3=API, 4=filesystem)
+    """
     console = Console()
     err_console = Console(stderr=True)
 
     try:
         # Parse arguments and validate config
-        config = parse_args()
+        config = parse_args(args)
 
         # Initialize services
         gemini_service = GeminiService()
@@ -50,38 +58,43 @@ def main() -> None:
 
         # Exit code: 0 if any succeeded
         if successful:
-            sys.exit(0)
+            return 0
         else:
-            sys.exit(3)  # All failed (API error)
+            return 3  # All failed (API error)
 
     except ConfigurationError as e:
         err_console.print(f"[red]Error:[/red] {e.message}")
         if e.remediation:
             err_console.print(f"[yellow]Fix:[/yellow] {e.remediation}")
-        sys.exit(e.exit_code)
+        return e.exit_code
 
     except ValidationError as e:
         err_console.print(f"[red]Error:[/red] {e.message}")
         if e.remediation:
             err_console.print(f"[yellow]Fix:[/yellow] {e.remediation}")
-        sys.exit(e.exit_code)
+        return e.exit_code
 
     except APIError as e:
         err_console.print(f"[red]Error:[/red] {e.message}")
         if e.remediation:
             err_console.print(f"[yellow]Fix:[/yellow] {e.remediation}")
-        sys.exit(e.exit_code)
+        return e.exit_code
 
     except FileSystemError as e:
         err_console.print(f"[red]Error:[/red] {e.message}")
         if e.remediation:
             err_console.print(f"[yellow]Fix:[/yellow] {e.remediation}")
-        sys.exit(e.exit_code)
+        return e.exit_code
+
+    except ValueError as e:
+        # Pydantic validation errors
+        err_console.print(f"[red]Validation Error:[/red] {str(e)}")
+        return 2
 
     except Exception as e:
         err_console.print(f"[red]Unexpected error:[/red] {str(e)}")
-        sys.exit(1)
+        return 1
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

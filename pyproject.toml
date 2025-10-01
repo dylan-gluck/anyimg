@@ -8,6 +8,7 @@ dependencies = [
     "google-genai>=1.39.1",
     "pillow>=11.3.0",
     "pydantic>=2.11.9",
+    "python-dotenv>=1.0.0",
     "rich>=14.1.0",
 ]
 

@@ -17,6 +17,8 @@ wheels/
 .specstar/
 .specify/
 specs/
+CLAUDE.md
+out/
 
 # Cache directories
 .ruff_cache/

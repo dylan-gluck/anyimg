@@ -128,7 +128,7 @@ class GeminiService:
                     from io import BytesIO
 
                     img_bytes = BytesIO()
-                    image.save(img_bytes, format="PNG")
+                    image.save(img_bytes, "PNG")
                     return img_bytes.getvalue()
 
             # No image data found

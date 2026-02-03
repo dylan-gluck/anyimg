@@ -1,6 +1,5 @@
 """Shared fixtures for integration tests."""
 
-from io import BytesIO
 from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock
@@ -26,18 +25,13 @@ def mock_gemini_success() -> Any:
     """Mock successful Gemini API response."""
     # Create a valid PNG image
     img = Image.new("RGB", (100, 100), color="blue")
-    img_bytes = BytesIO()
-    img.save(img_bytes, format="PNG")
-    png_data = img_bytes.getvalue()
 
-    # Mock response structure
+    # Mock response structure with new API (parts property)
     response = MagicMock()
     part = MagicMock()
-    part.inline_data.data = png_data
+    part.text = None
+    part.as_image.return_value = img
 
-    candidate = MagicMock()
-    candidate.content.parts = [part]
-
-    response.candidates = [candidate]
+    response.parts = [part]
 
     return response

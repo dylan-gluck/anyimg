@@ -27,7 +27,7 @@ def test_generate_single_image_success(
 
     service = GeminiService(client=mock_genai_client)
     request = ImageGenerationRequest(
-        model="gemini-2.5-flash-image-preview",
+        model="gemini-3-pro-image-preview",
         prompt="A blue sky",
         input_images=[],
         timeout=60,
@@ -38,7 +38,7 @@ def test_generate_single_image_success(
     # Assert correct parameters passed
     mock_genai_client.models.generate_content.assert_called_once()
     call_kwargs = mock_genai_client.models.generate_content.call_args.kwargs
-    assert call_kwargs["model"] == "gemini-2.5-flash-image-preview"
+    assert call_kwargs["model"] == "gemini-3-pro-image-preview"
     assert "A blue sky" in str(call_kwargs["contents"])
 
     # Assert successful response
@@ -62,7 +62,7 @@ def test_generate_multimodal_success(
 
     service = GeminiService(client=mock_genai_client)
     request = ImageGenerationRequest(
-        model="gemini-2.5-flash-image-preview",
+        model="gemini-3-pro-image-preview",
         prompt="Combine these styles",
         input_images=sample_pil_images[:2],
         timeout=60,
@@ -92,7 +92,7 @@ def test_generate_timeout_error(
 
     service = GeminiService(client=mock_genai_client)
     request = ImageGenerationRequest(
-        model="gemini-2.5-flash-image-preview",
+        model="gemini-3-pro-image-preview",
         prompt="A landscape",
         input_images=[],
         timeout=60,
@@ -114,7 +114,7 @@ def test_generate_auth_error(mock_genai_client: MagicMock, mock_auth_error: Exce
 
     service = GeminiService(client=mock_genai_client)
     request = ImageGenerationRequest(
-        model="gemini-2.5-flash-image-preview",
+        model="gemini-3-pro-image-preview",
         prompt="Test",
         input_images=[],
         timeout=60,
@@ -142,7 +142,7 @@ def test_generate_rate_limit_error(
 
     service = GeminiService(client=mock_genai_client)
     request = ImageGenerationRequest(
-        model="gemini-2.5-flash-image-preview",
+        model="gemini-3-pro-image-preview",
         prompt="An image",
         input_images=[],
         timeout=60,
@@ -158,21 +158,19 @@ def test_generate_empty_response(mock_genai_client: MagicMock) -> None:
     Mock: API returns Response with no inline_data
     Assert: raises APIResponseError indicating no image data
     """
-    # Mock response with no inline_data
+    # Mock response with no image parts
     empty_response = MagicMock()
     empty_part = MagicMock()
-    empty_part.inline_data = None
+    empty_part.text = "Some text response"
+    empty_part.as_image.return_value = None
 
-    empty_candidate = MagicMock()
-    empty_candidate.content.parts = [empty_part]
-
-    empty_response.candidates = [empty_candidate]
+    empty_response.parts = [empty_part]
 
     mock_genai_client.models.generate_content.return_value = empty_response
 
     service = GeminiService(client=mock_genai_client)
     request = ImageGenerationRequest(
-        model="gemini-2.5-flash-image-preview",
+        model="gemini-3-pro-image-preview",
         prompt="Generate something",
         input_images=[],
         timeout=60,
@@ -197,7 +195,7 @@ def test_generate_max_input_images(
 
     service = GeminiService(client=mock_genai_client)
     request = ImageGenerationRequest(
-        model="gemini-2.5-flash-image-preview",
+        model="gemini-3-pro-image-preview",
         prompt="Mix these styles",
         input_images=sample_pil_images,  # All 3 images
         timeout=60,

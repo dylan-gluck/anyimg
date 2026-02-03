@@ -53,6 +53,8 @@ def generate_batch(
             request = ImageGenerationRequest(
                 prompt=config.prompt,
                 input_images=input_pil_images,
+                aspect_ratio=config.aspect_ratio,
+                resolution=config.resolution,
             )
 
             # Generate image

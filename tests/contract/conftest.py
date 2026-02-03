@@ -1,6 +1,5 @@
 """Pytest fixtures for contract tests."""
 
-from io import BytesIO
 from unittest.mock import MagicMock
 
 import pytest
@@ -17,22 +16,15 @@ def mock_genai_client() -> MagicMock:
 @pytest.fixture
 def mock_success_response() -> MagicMock:
     """Valid Response with PNG bytes."""
-    # Create a simple PNG image
     img = Image.new("RGB", (100, 100), color="blue")
-    img_bytes = BytesIO()
-    img.save(img_bytes, format="PNG")
-    png_data = img_bytes.getvalue()
 
-    # Mock response structure
+    # Mock response structure with new API (parts property)
     response = MagicMock()
     part = MagicMock()
-    part.inline_data.data = png_data
-    part.inline_data.mime_type = "image/png"
+    part.text = None
+    part.as_image.return_value = img
 
-    candidate = MagicMock()
-    candidate.content.parts = [part]
-
-    response.candidates = [candidate]
+    response.parts = [part]
 
     return response
 

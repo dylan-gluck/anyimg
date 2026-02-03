@@ -25,6 +25,14 @@ class GenerationConfig(BaseModel):
     )
     batch_count: int = Field(default=1, ge=1, description="Number of images to generate")
     api_key: str = Field(..., description="Gemini API key from environment")
+    aspect_ratio: str | None = Field(
+        default=None,
+        description="Aspect ratio for generated image (e.g., '1:1', '16:9')",
+    )
+    resolution: str | None = Field(
+        default=None,
+        description="Resolution for generated image (e.g., '1K', '2K', '4K')",
+    )
 
     @field_validator("prompt")
     @classmethod
@@ -85,6 +93,8 @@ class GenerationConfig(BaseModel):
         input_images: list[str] | None = None,
         output_path: str | None = None,
         batch_count: int = 1,
+        aspect_ratio: str | None = None,
+        resolution: str | None = None,
     ) -> "GenerationConfig":
         """Create config from CLI arguments."""
         api_key = os.getenv("GEMINI_API_KEY", "")
@@ -95,4 +105,6 @@ class GenerationConfig(BaseModel):
             output_path=Path(output_path) if output_path else None,
             batch_count=batch_count,
             api_key=api_key,
+            aspect_ratio=aspect_ratio,
+            resolution=resolution,
         )

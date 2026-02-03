@@ -3,6 +3,7 @@
 from typing import Any
 
 from google import genai
+from google.genai import types
 
 from src.models.exceptions import (
     APIError,
@@ -49,10 +50,26 @@ class GeminiService:
             else:
                 contents = request.prompt
 
+            # Build generation config with image options
+            generate_config = types.GenerateContentConfig(
+                response_modalities=["TEXT", "IMAGE"],
+            )
+
+            # Add image config if aspect_ratio or resolution is specified
+            if request.aspect_ratio or request.resolution:
+                generate_config = types.GenerateContentConfig(
+                    response_modalities=["TEXT", "IMAGE"],
+                    image_config=types.ImageConfig(
+                        aspect_ratio=request.aspect_ratio,
+                        image_size=request.resolution,
+                    ),
+                )
+
             # Call Gemini API
             response = self.client.models.generate_content(
                 model=request.model,
-                contents=contents,
+                contents=contents,  # type: ignore[arg-type]
+                config=generate_config,
             )
 
             # Extract image data from response
@@ -102,13 +119,17 @@ class GeminiService:
         """
         try:
             # Navigate response structure to find image data
-            candidate = response.candidates[0]
-            parts = candidate.content.parts
+            for part in response.parts:
+                if part.text is not None:
+                    # Text response, ignore
+                    continue
+                elif (image := part.as_image()) is not None:
+                    # Convert PIL image to bytes
+                    from io import BytesIO
 
-            # Find the first part with inline_data
-            for part in parts:
-                if hasattr(part, "inline_data") and part.inline_data:
-                    return part.inline_data.data
+                    img_bytes = BytesIO()
+                    image.save(img_bytes, format="PNG")
+                    return img_bytes.getvalue()
 
             # No image data found
             raise APIResponseError(

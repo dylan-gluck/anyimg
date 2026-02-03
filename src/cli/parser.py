@@ -54,9 +54,43 @@ def parse_args(args: Sequence[str] | None = None) -> GenerationConfig:
         help="Number of images to generate (default: 1)",
     )
 
+    parser.add_argument(
+        "--aspect-ratio",
+        type=str,
+        default=None,
+        choices=["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"],
+        help="Aspect ratio for generated image (default: auto)",
+    )
+
+    parser.add_argument(
+        "--resolution",
+        type=str,
+        default=None,
+        choices=["1K", "2K", "4K"],
+        help="Resolution for generated image (default: auto)",
+    )
+
+    parser.add_argument(
+        "--batch-file",
+        type=str,
+        default=None,
+        help="JSONL file for batch API mode (triggers batch API instead of inline generation)",
+    )
+
     parsed = parser.parse_args(args)
 
-    # Parse comma-separated input images
+    # Batch mode: use JSONL file directly
+    if parsed.batch_file:
+        return GenerationConfig.from_args(
+            prompt="",
+            input_images=[],
+            output_path=parsed.batch_file,
+            batch_count=1,
+            aspect_ratio=parsed.aspect_ratio,
+            resolution=parsed.resolution,
+        )
+
+    # Normal mode: parse comma-separated input images
     input_image_list = None
     if parsed.input_images:
         input_image_list = [p.strip() for p in parsed.input_images.split(",")]
@@ -67,4 +101,6 @@ def parse_args(args: Sequence[str] | None = None) -> GenerationConfig:
         input_images=input_image_list,
         output_path=parsed.output_path,
         batch_count=parsed.batch_count,
+        aspect_ratio=parsed.aspect_ratio,
+        resolution=parsed.resolution,
     )

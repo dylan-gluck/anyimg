@@ -128,7 +128,15 @@ class GeminiService:
                     from io import BytesIO
 
                     img_bytes = BytesIO()
-                    image.save(img_bytes, "PNG")
+
+                    # Handle Google GenAI Image wrapper vs direct PIL Image
+                    if hasattr(image, "_pil_image"):
+                        # Google GenAI Image wrapper - use underlying PIL image
+                        image._pil_image.save(img_bytes, "PNG")
+                    else:
+                        # Direct PIL Image object
+                        image.save(img_bytes, "PNG")
+
                     return img_bytes.getvalue()
 
             # No image data found
